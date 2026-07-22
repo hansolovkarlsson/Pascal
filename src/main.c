@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "compiler.h"
+#include "bytecode.h"
 #include "vm.h"
 
 char *read_file(const char *filename) {
@@ -27,40 +29,46 @@ char *read_file(const char *filename) {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        printf("Usage: %s <source_file.pas>\n", argv[0]);
+        printf("Pascal Tools Usage:\n");
+        printf(". Usage: %s <source_file.pas>\n", argv[0]);
+        printf("  Compile code: %s -c <src.pas> <output.bin>\n", argv[0]);
+        printf("  Run bytecode: %s -r <input.bin>\n", argv[0]);
         return 1;
     }
 
-    char *pascal_program = read_file(argv[1]);
-    if (!pascal_program) return 1;
+    if (strcmp(argv[1], "-c") == 0 && argc == 4) {
+        char *pascal_program = read_file(argv[2]);
+        if (!pascal_program) return 1;
 
-    printf("--- Phase 1: Parsing AST ---\n");
-    ASTNode *ast = parse_ast(pascal_program);
-    
-    printf("\n--- Visual AST Representation (Unoptimized) ---\n");
-    print_ast(ast, 0);
+        printf("--- Step 1: Parsing and Optimizing AST ---\n");
+        ASTNode *ast = parse_ast(pascal_program);
+        ast = optimize_ast(ast);
 
-    printf("\n--- Phase 2: Optimizing AST ---\n");
-    ast = optimize_ast(ast);
+        printf("\n--- Step 2: Generating Code ---\n");
+        generate_code(ast);
+        code[code_idx++] = (Instruction){OP_HALT, 0};
 
-    printf("\n--- Visual AST Representation (Optimized) ---\n");
-    print_ast(ast, 0);
+        printf("\n--- Step 3: Archiving Bytecode Output ---\n");
+        save_bytecode(argv[3]);
 
-    printf("\n--- Phase 3: Emitting VM Bytecode ---\n");
-    generate_code(ast);
-    code[code_idx++] = (Instruction){OP_HALT, 0};
-    printf("Compilation completed. Total Instructions: %d\n", code_idx);
+        free_ast(ast);
+        free(pascal_program);
+        
+    } else if (strcmp(argv[1], "-r") == 0) {
+        printf("--- Step 1: Loading Binary Executable Image ---\n");
+        if (!load_bytecode(argv[2])) return 1;
 
-    printf("\n--- Phase 4: Virtual Machine execution ---\n");
-    run_vm();
+        printf("\n--- Step 2: Virtual Machine Execution ---\n");
+        run_vm();
 
-    printf("\n--- Execution Output Results ---\n");
-    for (int i = 0; i < sym_count; i++) {
-        printf("%s = %d\n", sym_table[i], vm_vars[i]);
+        printf("\n--- Final Runtime Execution Output Results ---\n");
+        for (int i = 0; i < sym_count; i++) {
+            printf("%s = %d\n", sym_table[i], vm_vars[i]);
+        }
+    } else {
+        printf("Error: Unrecognized operational arguments flag configurations.\n");
+        return 1;
     }
 
-    free_ast(ast);
-    free(pascal_program);
     return 0;
 }
-
