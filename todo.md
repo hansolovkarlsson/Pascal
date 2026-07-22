@@ -19,4 +19,6 @@
 * ~~Implement an abstract syntax tree (AST) for cleaner optimization~~
 * Create a bytecode output module to save compiled binaries directly to a file
 * Add Dead Code Elimination (e.g., removing variables that are assigned but never used)
-* Implement an AST Printer to output a visual tree structure text representation
+* ~~Implement an AST Printer to output a visual tree structure text representation~~
+* Incorporate relational conditional tokens like >, <, and =
+* Introduce jump offsets to support IF-THEN branch structures

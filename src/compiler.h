@@ -13,6 +13,7 @@ ASTNode *optimize_ast(ASTNode *node);
 void generate_code(ASTNode *node);
 void free_ast(ASTNode *node);
 
+// Add this line
+void print_ast(ASTNode *node, int indent);
+
 #endif
-
-
