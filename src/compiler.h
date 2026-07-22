@@ -8,6 +8,11 @@ extern int code_idx;
 extern char sym_table[MAX_SYMBOLS][MAX_NAME];
 extern int sym_count;
 
-void compile(const char *source);
+ASTNode *parse_ast(const char *source);
+ASTNode *optimize_ast(ASTNode *node);
+void generate_code(ASTNode *node);
+void free_ast(ASTNode *node);
 
 #endif
+
+

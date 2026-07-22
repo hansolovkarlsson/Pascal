@@ -26,4 +26,28 @@ typedef struct {
     int arg;
 } Instruction;
 
+// AST Nodes
+typedef enum {
+    NODE_NUMBER,
+    NODE_VARIABLE,
+    NODE_BINARY_OP,
+    NODE_ASSIGN,
+    NODE_COMPOUND
+} NodeType;
+
+typedef struct ASTNode {
+    NodeType type;
+    union {
+        // NODE_NUMBER
+        int num_value;
+        // NODE_VARIABLE / NODE_ASSIGN
+        int var_idx;
+    } data;
+    TokenType op; // Used for NODE_BINARY_OP (+, -, *, /)
+    struct ASTNode *left;
+    struct ASTNode *right;
+    struct ASTNode *next; // Linked list for sequential statements
+} ASTNode;
+
 #endif
+

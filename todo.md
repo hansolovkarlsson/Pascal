@@ -10,3 +10,13 @@
     
 4. Expand on syntax until Google AI gives up
 
+
+
+# From Gemini
+
+* Add Control Flow structural support like IF/THEN loops
+* Incorporate Write / WriteLn IO procedures
+* ~~Implement an abstract syntax tree (AST) for cleaner optimization~~
+* Create a bytecode output module to save compiled binaries directly to a file
+* Add Dead Code Elimination (e.g., removing variables that are assigned but never used)
+* Implement an AST Printer to output a visual tree structure text representation
