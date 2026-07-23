@@ -28,7 +28,7 @@ char *read_file(const char *filename) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 3) {
+    if (argc < 2) {
         printf("Pascal Tools Usage:\n");
         printf("  Compile code: %s -c <src.pas> <output.bin>\n", argv[0]);
         printf("  Run bytecode: %s -r <input.bin>\n", argv[0]);
@@ -41,6 +41,12 @@ int main(int argc, char *argv[]) {
 
         printf("--- Step 1: Parsing and Optimizing AST ---\n");
         ASTNode *ast = parse_ast(pascal_program);
+
+printf("\n--- Phase 2: Type Validation Checking ---\n");
+type_check(ast);
+printf("Type verification successful! Zero semantic anomalies detected.\n");
+
+printf("\n--- Phase 3: Optimizing AST Tree ---\n");
         ast = optimize_ast(ast);
 
         printf("\n--- Step 2: Generating Code ---\n");
@@ -62,7 +68,7 @@ int main(int argc, char *argv[]) {
 
         printf("\n--- Final Runtime Execution Output Results ---\n");
         for (int i = 0; i < sym_count; i++) {
-            printf("%s = %d\n", sym_table[i], vm_vars[i]);
+            printf("%s = %d\n", sym_table[i].name, vm_vars[i]);
         }
     } else {
         printf("Error: Unrecognized operational arguments flag configurations.\n");

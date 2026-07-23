@@ -7,40 +7,35 @@
 Instruction code[MAX_CODE];
 int code_idx = 0;
 
-Symbol sym_table[MAX_SYMBOLS];
+char sym_table[MAX_SYMBOLS][MAX_NAME];
 int sym_count = 0;
 
+// Helper to instantiate raw node structs safely on heap
 static ASTNode *create_node(NodeType type) {
     ASTNode *node = calloc(1, sizeof(ASTNode));
-    if (!node) { printf("Memory failure\n"); exit(1); }
+    if (!node) {
+        fprintf(stderr, "Error: AST memory allocation failed\n");
+        exit(1);
+    }
     node->type = type;
-    node->expression_type = TYPE_UNKNOWN;
     return node;
 }
 
 static int find_var(const char *name) {
     for (int i = 0; i < sym_count; i++) {
-        if (strcmp(sym_table[i].name, name) == 0) return i;
+        if (strcmp(sym_table[i], name) == 0) return i;
     }
-    printf("Compile Error: Unknown variable '%s'\n", name);
+    printf("Compile Error: Unknown variable %s\n", name);
     exit(1);
 }
 
-static void add_var(const char *name, DataType type) {
-    for (int i = 0; i < sym_count; i++) {
-        if (strcmp(sym_table[i].name, name) == 0) {
-            printf("Compile Error: Duplicate variable declaration '%s'\n", name);
-            exit(1);
-        }
-    }
-    strcpy(sym_table[sym_count].name, name);
-    sym_table[sym_count].type = type;
-    sym_count++;
+static void add_var(const char *name) {
+    strcpy(sym_table[sym_count++], name);
 }
 
 static void match(TokenType type) {
     if (token.type == type) next_token();
-    else { printf("Compile Error: Token mismatch syntax error\n"); exit(1); }
+    else { printf("Compile Error: Unexpected token syntax\n"); exit(1); }
 }
 
 static ASTNode *expression(void);
@@ -49,24 +44,15 @@ static ASTNode *factor(void) {
     if (token.type == TOKEN_NUMBER) {
         ASTNode *node = create_node(NODE_NUMBER);
         node->data.num_value = token.value;
-        node->expression_type = TYPE_INTEGER;
         match(TOKEN_NUMBER);
-        return node;
-    } else if (token.type == TOKEN_TRUE || token.type == TOKEN_FALSE) {
-        ASTNode *node = create_node(NODE_BOOLEAN);
-        node->data.num_value = token.value;
-        node->expression_type = TYPE_BOOLEAN;
-        next_token();
         return node;
     } else if (token.type == TOKEN_IDENTIFIER) {
         ASTNode *node = create_node(NODE_VARIABLE);
-        int idx = find_var(token.text);
-        node->data.var_idx = idx;
-        node->expression_type = sym_table[idx].type;
+        node->data.var_idx = find_var(token.text);
         match(TOKEN_IDENTIFIER);
         return node;
     }
-    printf("Compile Error: Invalid factor entry\n");
+    printf("Compile Error: Expected factor\n");
     exit(1);
 }
 
@@ -98,6 +84,7 @@ static ASTNode *expression(void) {
 
 ASTNode *parse_ast(const char *source) {
     init_lexer(source);
+
     match(TOKEN_PROGRAM);
     match(TOKEN_IDENTIFIER);
     match(TOKEN_SEMI);
@@ -105,27 +92,15 @@ ASTNode *parse_ast(const char *source) {
     if (token.type == TOKEN_VAR) {
         match(TOKEN_VAR);
         while (token.type == TOKEN_IDENTIFIER) {
-            char temporary_names[20][MAX_NAME];
-            int count = 0;
-            
-            strcpy(temporary_names[count++], token.text);
+            add_var(token.text);
             match(TOKEN_IDENTIFIER);
-            
             while (token.type == TOKEN_COMMA) {
                 match(TOKEN_COMMA);
-                strcpy(temporary_names[count++], token.text);
+                add_var(token.text);
                 match(TOKEN_IDENTIFIER);
             }
             match(TOKEN_COLON);
-            
-            DataType target_type = TYPE_UNKNOWN;
-            if (token.type == TOKEN_INTEGER) { target_type = TYPE_INTEGER; match(TOKEN_INTEGER); }
-            else if (token.type == TOKEN_BOOLEAN) { target_type = TYPE_BOOLEAN; match(TOKEN_BOOLEAN); }
-            else { printf("Compile Error: Unknown primitive category\n"); exit(1); }
-            
-            for (int i = 0; i < count; i++) {
-                add_var(temporary_names[i], target_type);
-            }
+            match(TOKEN_INTEGER);
             match(TOKEN_SEMI);
         }
     }
@@ -142,59 +117,17 @@ ASTNode *parse_ast(const char *source) {
         assign_node->left = expression();
         match(TOKEN_SEMI);
 
-        if (!root->left) root->left = assign_node;
-        else current->next = assign_node;
+        if (!root->left) {
+            root->left = assign_node;
+        } else {
+            current->next = assign_node;
+        }
         current = assign_node;
     }
     match(TOKEN_END);
     match(TOKEN_PERIOD);
     return root;
 }
-
-// --- GLOBAL TYPE CHECK VALIDATION PASS ---
-void type_check(ASTNode *node) {
-    if (!node) return;
-
-    // Post-order traversal: check leaf child nodes first
-    type_check(node->left);
-    type_check(node->right);
-
-    switch (node->type) {
-        case NODE_COMPOUND:
-            node->expression_type = TYPE_UNKNOWN;
-            break;
-
-        case NODE_ASSIGN: {
-            DataType var_type = sym_table[node->data.var_idx].type;
-            DataType val_type = node->left->expression_type;
-            if (var_type != val_type) {
-                printf("Type Error: Variable '%s' requires type matching, cannot assign mismatched structural payload.\n", 
-                       sym_table[node->data.var_idx].name);
-                exit(1);
-            }
-            node->expression_type = var_type;
-            type_check(node->next); // Move down assignment chain sequence
-            break;
-        }
-
-        case NODE_BINARY_OP: {
-            // Arithmetic operators (+, -, *, /) are only valid for integers
-            if (node->left->expression_type != TYPE_INTEGER || node->right->expression_type != TYPE_INTEGER) {
-                printf("Type Error: Binary operations require numeric components. Math expressions reject Boolean arguments.\n");
-                exit(1);
-            }
-            node->expression_type = TYPE_INTEGER;
-            break;
-        }
-
-        case NODE_NUMBER:   node->expression_type = TYPE_INTEGER; break;
-        case NODE_BOOLEAN:  node->expression_type = TYPE_BOOLEAN; break;
-        case NODE_VARIABLE: node->expression_type = sym_table[node->data.var_idx].type; break;
-    }
-}
-
-// Code generation and optimization passes remain mostly unchanged...
-
 
 // AST Optimization: Constant Folding Pass
 ASTNode *optimize_ast(ASTNode *node) {
@@ -247,13 +180,9 @@ void generate_code(ASTNode *node) {
             code[code_idx++] = (Instruction){OP_STORE, node->data.var_idx};
             generate_code(node->next);
             break;
-            
-        // Add NODE_BOOLEAN here to fall through into NODE_NUMBER logic
-        case NODE_BOOLEAN:
         case NODE_NUMBER:
             code[code_idx++] = (Instruction){OP_PUSH, node->data.num_value};
             break;
-            
         case NODE_VARIABLE:
             code[code_idx++] = (Instruction){OP_LOAD, node->data.var_idx};
             break;
@@ -305,8 +234,7 @@ void print_ast(ASTNode *node, int indent) {
             break;
 
         case NODE_ASSIGN:
-            // Fix: Added .name to access the string inside the Symbol struct
-            printf("[Assignment] -> Variable: %s\n", sym_table[node->data.var_idx].name);
+            printf("[Assignment] -> Variable: %s\n", sym_table[node->data.var_idx]);
             print_indent(indent + 1);
             printf("Value:\n");
             print_ast(node->left, indent + 2);
@@ -329,13 +257,8 @@ void print_ast(ASTNode *node, int indent) {
             printf("[Number] %d\n", node->data.num_value);
             break;
 
-        case NODE_BOOLEAN:
-            printf("[Boolean] %s\n", node->data.num_value ? "true" : "false");
-            break;
-
         case NODE_VARIABLE:
-            // Fix: Added .name to access the string inside the Symbol struct
-            printf("[Variable] %s\n", sym_table[node->data.var_idx].name);
+            printf("[Variable] %s\n", sym_table[node->data.var_idx]);
             break;
     }
 }

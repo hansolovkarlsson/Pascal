@@ -18,17 +18,12 @@ void next_token(void) {
         char *p = token.text;
         while (isalnum(*src)) *p++ = *src++;
         *p = '\0';
-
-    // Inside next_token() where keywords are verified via strcasecmp:
-    if (strcasecmp(token.text, "program") == 0) token.type = TOKEN_PROGRAM;
-    else if (strcasecmp(token.text, "var") == 0) token.type = TOKEN_VAR;
-    else if (strcasecmp(token.text, "begin") == 0) token.type = TOKEN_BEGIN;
-    else if (strcasecmp(token.text, "end") == 0) token.type = TOKEN_END;
-    else if (strcasecmp(token.text, "integer") == 0) token.type = TOKEN_INTEGER;
-    else if (strcasecmp(token.text, "boolean") == 0) token.type = TOKEN_BOOLEAN;
-    else if (strcasecmp(token.text, "true") == 0) { token.type = TOKEN_TRUE; token.value = 1; }
-    else if (strcasecmp(token.text, "false") == 0) { token.type = TOKEN_FALSE; token.value = 0; }
-    else token.type = TOKEN_IDENTIFIER;
+        if (strcasecmp(token.text, "program") == 0) token.type = TOKEN_PROGRAM;
+        else if (strcasecmp(token.text, "var") == 0) token.type = TOKEN_VAR;
+        else if (strcasecmp(token.text, "begin") == 0) token.type = TOKEN_BEGIN;
+        else if (strcasecmp(token.text, "end") == 0) token.type = TOKEN_END;
+        else if (strcasecmp(token.text, "integer") == 0) token.type = TOKEN_INTEGER;
+        else token.type = TOKEN_IDENTIFIER;
         return;
     }
 

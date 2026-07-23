@@ -26,7 +26,7 @@ TEST_BIN := $(TEST_SRC:.pas=.bin)
 
 
 # Make
-all: $(TARGET) $(TEST_BIN)
+all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
