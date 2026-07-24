@@ -10,3 +10,407 @@ Type Error: Variable 'count' requires type matching, cannot assign mismatched st
 
 --- Phase 2: Type Validation Checking ---
 Type Error: Variable 'count' requires type matching, cannot assign mismatched structural payload.
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 15
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 5
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v1_math.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 20 and 3
+[Optimization] Folded constants: 10 and 60
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v2_optimize.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 9
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v3_ast.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 10 and 5
+[DCE Optimization] Removing dead assignment to unreferenced variable: flag
+[DCE Optimization] Removing dead assignment to unreferenced variable: count
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v7_type_ok.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 10 and 2
+[DCE Optimization] Removing dead assignment to unreferenced variable: active
+[DCE Optimization] Removing dead assignment to unreferenced variable: x
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 12
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v8_dce.bin
+--- Phase 1: Parsing AST ---
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 10 and 5
+[DCE Optimization] Removing dead assignment to unreferenced variable: flag
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: count
+        Value:
+            [Number] 15
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v11_comp.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 15
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 5
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v1_math.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 10 and 5
+[DCE Optimization] Removing dead assignment to unreferenced variable: flag
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: count
+        Value:
+            [Number] 15
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v11_comp.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_equal
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_greater
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_less
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 10
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 20
+    [Assignment] -> Variable: z
+        Value:
+            [Binary Op] '+'
+                Left:
+                    [Variable] x
+                Right:
+                    [Number] 10
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v11_test.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 20 and 3
+[Optimization] Folded constants: 10 and 60
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v2_optimize.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 9
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v3_ast.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 10 and 5
+[DCE Optimization] Removing dead assignment to unreferenced variable: flag
+[DCE Optimization] Removing dead assignment to unreferenced variable: count
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v7_type_ok.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 10 and 2
+[DCE Optimization] Removing dead assignment to unreferenced variable: active
+[DCE Optimization] Removing dead assignment to unreferenced variable: x
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 12
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v8_dce.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 15
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 5
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v1_math.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 10 and 5
+[DCE Optimization] Removing dead assignment to unreferenced variable: flag
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: count
+        Value:
+            [Number] 15
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v11_comp.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_equal
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_greater
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_less
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 10
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 20
+    [Assignment] -> Variable: z
+        Value:
+            [Binary Op] '+'
+                Left:
+                    [Variable] x
+                Right:
+                    [Number] 10
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v11_test.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 20 and 3
+[Optimization] Folded constants: 10 and 60
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v2_optimize.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 9
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v3_ast.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 10 and 5
+[DCE Optimization] Removing dead assignment to unreferenced variable: flag
+[DCE Optimization] Removing dead assignment to unreferenced variable: count
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v7_type_ok.bin
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+
+--- Phase 3: Optimizing AST Tree ---
+[Optimization] Folded constants: 10 and 2
+[DCE Optimization] Removing dead assignment to unreferenced variable: active
+[DCE Optimization] Removing dead assignment to unreferenced variable: x
+
+--- Visual AST Representation (Optimized) ---
+[Compound Statement]
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 12
+
+--- Step 4: Generating Code ---
+
+--- Step 5: Archiving Bytecode Output ---
+[Bytecode Module] Binary successfully saved to test/v8_dce.bin

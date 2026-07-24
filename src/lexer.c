@@ -45,21 +45,23 @@ void next_token(void) {
 
     if (!*src) { token.type = TOKEN_EOF; return; }
 
-    if (isalpha(*src)) {
+    // Allow letters or underscores at the start of identifiers
+    if (isalpha(*src) || *src == '_') {
         char *p = token.text;
-        while (isalnum(*src)) *p++ = *src++;
+        // Allow letters, digits, or underscores inside identifiers
+        while (isalnum(*src) || *src == '_') *p++ = *src++;
         *p = '\0';
 
-    // Inside next_token() where keywords are verified via strcasecmp:
-    if (strcasecmp(token.text, "program") == 0) token.type = TOKEN_PROGRAM;
-    else if (strcasecmp(token.text, "var") == 0) token.type = TOKEN_VAR;
-    else if (strcasecmp(token.text, "begin") == 0) token.type = TOKEN_BEGIN;
-    else if (strcasecmp(token.text, "end") == 0) token.type = TOKEN_END;
-    else if (strcasecmp(token.text, "integer") == 0) token.type = TOKEN_INTEGER;
-    else if (strcasecmp(token.text, "boolean") == 0) token.type = TOKEN_BOOLEAN;
-    else if (strcasecmp(token.text, "true") == 0) { token.type = TOKEN_TRUE; token.value = 1; }
-    else if (strcasecmp(token.text, "false") == 0) { token.type = TOKEN_FALSE; token.value = 0; }
-    else token.type = TOKEN_IDENTIFIER;
+        // Keywords check
+        if (strcasecmp(token.text, "program") == 0) token.type = TOKEN_PROGRAM;
+        else if (strcasecmp(token.text, "var") == 0) token.type = TOKEN_VAR;
+        else if (strcasecmp(token.text, "begin") == 0) token.type = TOKEN_BEGIN;
+        else if (strcasecmp(token.text, "end") == 0) token.type = TOKEN_END;
+        else if (strcasecmp(token.text, "integer") == 0) token.type = TOKEN_INTEGER;
+        else if (strcasecmp(token.text, "boolean") == 0) token.type = TOKEN_BOOLEAN;
+        else if (strcasecmp(token.text, "true") == 0) { token.type = TOKEN_TRUE; token.value = 1; }
+        else if (strcasecmp(token.text, "false") == 0) { token.type = TOKEN_FALSE; token.value = 0; }
+        else token.type = TOKEN_IDENTIFIER;
         return;
     }
 
@@ -79,6 +81,10 @@ void next_token(void) {
     if (*src == '-') { token.type = TOKEN_MINUS; src++; return; }
     if (*src == '*') { token.type = TOKEN_MUL; src++; return; }
     if (*src == '/') { token.type = TOKEN_DIV; src++; return; }
+    if (*src == '=') { token.type = TOKEN_EQ; src++; return; }
+    if (*src == '<') { token.type = TOKEN_LT; src++; return; }
+    if (*src == '>') { token.type = TOKEN_GT; src++; return; }
+
 
     token.type = TOKEN_UNKNOWN;
     src++;

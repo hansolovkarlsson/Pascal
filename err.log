@@ -1,0 +1,6 @@
+test/v10_error_lineno.pas:5: Compile Error: Type mismatch: cannot assign value to variable 'count'
+test/v7_op_error.pas:7: Compile Error: Type Error: Binary math operations require integer operands.
+test/v7_type_error.pas:5: Compile Error: Type mismatch: cannot assign value to variable 'count'
+test/v10_error_lineno.pas:5: Compile Error: Type mismatch: cannot assign value to variable 'count'
+test/v7_op_error.pas:7: Compile Error: Type Error: Binary math operations require integer operands.
+test/v7_type_error.pas:5: Compile Error: Type mismatch: cannot assign value to variable 'count'

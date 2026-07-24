@@ -18,6 +18,9 @@ void run_vm(void) {
             case OP_SUB:   vm_stack[sp - 1] -= vm_stack[sp]; sp--; break;
             case OP_MUL:   vm_stack[sp - 1] *= vm_stack[sp]; sp--; break;
             case OP_DIV:   vm_stack[sp - 1] /= vm_stack[sp]; sp--; break;
+            case OP_EQ:    vm_stack[sp - 1] = (vm_stack[sp - 1] == vm_stack[sp]); sp--; break;
+            case OP_LT:    vm_stack[sp - 1] = (vm_stack[sp - 1] <  vm_stack[sp]); sp--; break;
+            case OP_GT:    vm_stack[sp - 1] = (vm_stack[sp - 1] >  vm_stack[sp]); sp--; break;
             case OP_HALT:  return;
         }
     }

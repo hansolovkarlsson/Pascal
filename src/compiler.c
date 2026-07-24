@@ -103,7 +103,7 @@ static ASTNode *term(void) {
     return node;
 }
 
-static ASTNode *expression(void) {
+static ASTNode *arithmetic_expression(void) {
     ASTNode *node = term();
     while (token.type == TOKEN_PLUS || token.type == TOKEN_MINUS) {
         ASTNode *op_node = create_node(NODE_BINARY_OP);
@@ -115,6 +115,21 @@ static ASTNode *expression(void) {
     }
     return node;
 }
+
+// Top-level expression entry point now handles relational comparisons
+static ASTNode *expression(void) {
+    ASTNode *node = arithmetic_expression();
+    while (token.type == TOKEN_EQ || token.type == TOKEN_LT || token.type == TOKEN_GT) {
+        ASTNode *op_node = create_node(NODE_BINARY_OP);
+        op_node->op = token.type;
+        op_node->left = node;
+        next_token();
+        op_node->right = arithmetic_expression();
+        node = op_node;
+    }
+    return node;
+}
+
 
 // Update AST Parser entry point to store filename context:
 ASTNode *parse_ast(const char *source, const char *filename) {
@@ -202,10 +217,18 @@ void type_check(ASTNode *node, const char *filename) {
         }
 
         case NODE_BINARY_OP: {
-            if (node->left->expression_type != TYPE_INTEGER || node->right->expression_type != TYPE_INTEGER) {
-                compile_error(node->line, "Type mismatch: binary operations require integer operands");
+            if (node->op == TOKEN_EQ || node->op == TOKEN_LT || node->op == TOKEN_GT) {
+                if (node->left->expression_type != TYPE_INTEGER || node->right->expression_type != TYPE_INTEGER) {
+                    compile_error(node->line, "Type Error: Relational comparison operators require integer operands.");
+                }
+                node->expression_type = TYPE_BOOLEAN;
+            } else {
+                // Arithmetic operations (+, -, *, /)
+                if (node->left->expression_type != TYPE_INTEGER || node->right->expression_type != TYPE_INTEGER) {
+                    compile_error(node->line, "Type Error: Binary math operations require integer operands.");
+                }
+                node->expression_type = TYPE_INTEGER;
             }
-            node->expression_type = TYPE_INTEGER;
             break;
         }
 
@@ -227,20 +250,23 @@ ASTNode *optimize_ast(ASTNode *node) {
     node->right = optimize_ast(node->right);
     node->next = optimize_ast(node->next);
 
-    // If both operands are raw numbers, evaluate mathematical transformations at compile-time
     if (node->type == NODE_BINARY_OP && node->left->type == NODE_NUMBER && node->right->type == NODE_NUMBER) {
         int l_val = node->left->data.num_value;
         int r_val = node->right->data.num_value;
         int folded_val = 0;
+        int is_comparison = 0;
 
         switch (node->op) {
             case TOKEN_PLUS:  folded_val = l_val + r_val; break;
             case TOKEN_MINUS: folded_val = l_val - r_val; break;
             case TOKEN_MUL:   folded_val = l_val * r_val; break;
             case TOKEN_DIV:   
-                if (r_val == 0) { printf("Compile Error: Division by zero\n"); exit(1); }
+                if (r_val == 0) { compile_error(node->line, "Compile Error: Division by zero"); }
                 folded_val = l_val / r_val; 
                 break;
+            case TOKEN_EQ:    folded_val = (l_val == r_val); is_comparison = 1; break;
+            case TOKEN_LT:    folded_val = (l_val < r_val);  is_comparison = 1; break;
+            case TOKEN_GT:    folded_val = (l_val > r_val);  is_comparison = 1; break;
             default: return node;
         }
 
@@ -248,11 +274,12 @@ ASTNode *optimize_ast(ASTNode *node) {
         free_ast(node->left);
         free_ast(node->right);
         
-        node->type = NODE_NUMBER;
+        node->type = is_comparison ? NODE_BOOLEAN : NODE_NUMBER;
         node->data.num_value = folded_val;
         node->left = NULL;
         node->right = NULL;
     }
+
     return node;
 }
 
@@ -286,6 +313,9 @@ void generate_code(ASTNode *node) {
             if (node->op == TOKEN_MINUS) code[code_idx++] = (Instruction){OP_SUB, 0};
             if (node->op == TOKEN_MUL)   code[code_idx++] = (Instruction){OP_MUL, 0};
             if (node->op == TOKEN_DIV)   code[code_idx++] = (Instruction){OP_DIV, 0};
+            if (node->op == TOKEN_EQ)    code[code_idx++] = (Instruction){OP_EQ, 0};
+            if (node->op == TOKEN_LT)    code[code_idx++] = (Instruction){OP_LT, 0};
+            if (node->op == TOKEN_GT)    code[code_idx++] = (Instruction){OP_GT, 0};
             break;
     }
 }
@@ -311,6 +341,9 @@ static const char* token_type_to_str(TokenType type) {
         case TOKEN_MINUS: return "-";
         case TOKEN_MUL:   return "*";
         case TOKEN_DIV:   return "/";
+        case TOKEN_EQ:    return "=";
+        case TOKEN_LT:    return "<";
+        case TOKEN_GT:    return ">";
         default:          return "?";
     }
 }
