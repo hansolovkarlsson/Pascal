@@ -414,3 +414,283 @@ Type Error: Variable 'count' requires type matching, cannot assign mismatched st
 
 --- Step 5: Archiving Bytecode Output ---
 [Bytecode Module] Binary successfully saved to test/v8_dce.bin
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 15
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 5
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v1_math.bin (5 instructions, 3 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[Optimization] Folded constants: 10 and 5
+[DCE Optimization] Removing dead assignment to unreferenced variable: flag
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+    [Assignment] -> Variable: count
+        Value:
+            [Number] 15
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v11_comp.bin (3 instructions, 2 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_equal
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_greater
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_less
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 10
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 20
+    [Assignment] -> Variable: z
+        Value:
+            [Binary Op] '+'
+                Left:
+                    [Variable] x
+                Right:
+                    [Number] 10
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v11_test.bin (9 instructions, 6 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[Optimization] Folded constants: 20 and 3
+[Optimization] Folded constants: 10 and 60
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v2_optimize.bin (1 instructions, 1 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 9
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v3_ast.bin (3 instructions, 2 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[Optimization] Folded constants: 10 and 5
+[DCE Optimization] Removing dead assignment to unreferenced variable: flag
+[DCE Optimization] Removing dead assignment to unreferenced variable: count
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v7_type_ok.bin (1 instructions, 2 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[Optimization] Folded constants: 10 and 2
+[DCE Optimization] Removing dead assignment to unreferenced variable: active
+[DCE Optimization] Removing dead assignment to unreferenced variable: x
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 12
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v8_dce.bin (3 instructions, 3 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 15
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 5
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v1_math.bin (5 instructions, 3 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[Optimization] Folded constants: 10 and 5
+[DCE Optimization] Removing dead assignment to unreferenced variable: flag
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+    [Assignment] -> Variable: count
+        Value:
+            [Number] 15
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v11_comp.bin (3 instructions, 2 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_equal
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_greater
+[DCE Optimization] Removing dead assignment to unreferenced variable: is_less
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 10
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 20
+    [Assignment] -> Variable: z
+        Value:
+            [Binary Op] '+'
+                Left:
+                    [Variable] x
+                Right:
+                    [Number] 10
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v11_test.bin (9 instructions, 6 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[Optimization] Folded constants: 20 and 3
+[Optimization] Folded constants: 10 and 60
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v2_optimize.bin (1 instructions, 1 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[DCE Optimization] Removing dead assignment to unreferenced variable: result
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+    [Assignment] -> Variable: x
+        Value:
+            [Number] 9
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v3_ast.bin (3 instructions, 2 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[Optimization] Folded constants: 10 and 5
+[DCE Optimization] Removing dead assignment to unreferenced variable: flag
+[DCE Optimization] Removing dead assignment to unreferenced variable: count
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v7_type_ok.bin (1 instructions, 2 symbols)
+
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Checking ---
+
+--- Phase 3: Optimizing AST ---
+[Optimization] Folded constants: 10 and 2
+[DCE Optimization] Removing dead assignment to unreferenced variable: active
+[DCE Optimization] Removing dead assignment to unreferenced variable: x
+
+--- Abstract Syntax Tree Visualization ---
+[Compound Statement]
+    [Assignment] -> Variable: y
+        Value:
+            [Number] 12
+
+--- Phase 4: Code Generation ---
+[Compiler] Successfully written binary payload image to test/v8_dce.bin (3 instructions, 3 symbols)

@@ -3,7 +3,8 @@
 
 #include "common.h"
 
+extern int vm_vars[MAX_SYMBOLS];
+
 void run_vm(void);
 
 #endif
-

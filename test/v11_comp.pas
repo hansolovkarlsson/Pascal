@@ -1,8 +1,7 @@
 program Comp;
 var
-  count : integer;
-  flag  : boolean;
+  flag,flag2  : boolean;
 begin
-  count := 10 + 5;
-  flag := count = 15;
+  flag  := 1=1;
+  flag2 := flag;
 end.

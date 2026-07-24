@@ -5,81 +5,70 @@
 #include "bytecode.h"
 #include "vm.h"
 
-char *read_file(const char *filename) {
-    FILE *file = fopen(filename, "r");
-    if (!file) {
-        fprintf(stderr, "Error: Could not open file %s\n", filename);
-        return NULL;
-    }
-    fseek(file, 0, SEEK_END);
-    long length = ftell(file);
-    fseek(file, 0, SEEK_SET);
+static char *read_file(const char *path) {
+    FILE *f = fopen(path, "rb");
+    if (!f) { perror("Failed to open source file"); exit(1); }
+    fseek(f, 0, SEEK_END);
+    long length = ftell(f);
+    fseek(f, 0, SEEK_SET);
 
     char *buffer = malloc(length + 1);
-    if (!buffer) {
-        fprintf(stderr, "Error: Memory allocation failed\n");
-        fclose(file);
-        return NULL;
-    }
-    size_t read_bytes = fread(buffer, 1, length, file);
-    buffer[read_bytes] = '\0';
-    fclose(file);
+    if (!buffer) { fprintf(stderr, "Allocation failure\n"); exit(1); }
+    fread(buffer, 1, length, f);
+    buffer[length] = '\0';
+    fclose(f);
     return buffer;
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Pascal Tools Usage:\n");
-        printf("  Compile code: %s -c <src.pas> <output.bin>\n", argv[0]);
-        printf("  Run bytecode: %s -r <input.bin>\n", argv[0]);
+    if (argc < 3) {
+        printf("Usage:\n");
+        printf("  Compile: %s -c <source.pas> <output.bin>\n", argv[0]);
+        printf("  Execute: %s -r <input.bin>\n", argv[0]);
         return 1;
     }
 
-    if (strcmp(argv[1], "-c") == 0 && argc == 4) {
-        // In main.c (-c branch):
-        char *src_filename = argv[2];
-        char *pascal_program = read_file(src_filename);
-        if (!pascal_program) return 1;
+    if (strcmp(argv[1], "-c") == 0) {
+        const char *source_path = argv[2];
+        const char *bin_path = argv[3];
+        char *source = read_file(source_path);
 
-        printf("--- Phase 1: Parsing AST ---\n");
-        ASTNode *ast = parse_ast(pascal_program, src_filename);
+        printf("\n--- Phase 1: Parsing AST ---\n");
+        ASTNode *ast = parse_ast(source, source_path);
 
-        printf("\n--- Phase 2: Type Validation Checking ---\n");
-        type_check(ast, src_filename);
+        printf("\n--- Phase 2: Type Checking ---\n");
+        type_check(ast);
 
+        printf("\n--- Phase 3: Optimizing AST ---\n");
+        ast = optimize_ast(ast);
+        ast = eliminate_dead_code(ast);
 
-        printf("\n--- Phase 3: Optimizing AST Tree ---\n");
-        ast = optimize_ast(ast);            // Run constant folding first
-        ast = eliminate_dead_code(ast);     // Run dead code elimination second
-
-        printf("\n--- Visual AST Representation (Optimized) ---\n");
+        printf("\n--- Abstract Syntax Tree Visualization ---\n");
         print_ast(ast, 0);
 
-        printf("\n--- Step 4: Generating Code ---\n");
+        printf("\n--- Phase 4: Code Generation ---\n");
         generate_code(ast);
-        code[code_idx++] = (Instruction){OP_HALT, 0};
 
-        printf("\n--- Step 5: Archiving Bytecode Output ---\n");
-        save_bytecode(argv[3]);
+        save_bytecode(bin_path);
+        printf("[Compiler] Successfully written binary payload image to %s (%d instructions, %d symbols)\n", 
+               bin_path, code_idx, sym_count);
 
         free_ast(ast);
-        free(pascal_program);
-        
+        free(source);
     } else if (strcmp(argv[1], "-r") == 0) {
-        printf("--- Step 1: Loading Binary Executable Image ---\n");
-        if (!load_bytecode(argv[2])) return 1;
+        const char *bin_path = argv[2];
+
+        printf("\n--- Step 1: Loading Binary Executable Image ---\n");
+        load_bytecode(bin_path);
+        printf("[Bytecode Module] Loaded executable successfully (%d instructions, %d symbols)\n", code_idx, sym_count);
 
         printf("\n--- Step 2: Virtual Machine Execution ---\n");
         run_vm();
-
-        printf("\n--- Final Runtime Execution Output Results ---\n");
-        for (int i = 0; i < sym_count; i++) {
-            printf("%s = %d\n", sym_table[i].name, vm_vars[i]);
-        }
     } else {
-        printf("Error: Unrecognized operational arguments flag configurations.\n");
+        fprintf(stderr, "Unknown flag '%s'\n", argv[1]);
         return 1;
     }
 
     return 0;
 }
+

@@ -10,7 +10,7 @@
 
 # Assembler
 CC      ?= cc
-CFLAGS  ?= -std=c99 -O2 -Wall -Wextra
+CFLAGS  ?= -std=c99 -O2 -Wall -Wextra -I.
 
 # Multi-file
 SRC_DIR := src
@@ -29,7 +29,8 @@ TEST_BIN := $(TEST_SRC:.pas=.bin)
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
+	@mkdir -p bin
+	$(CC) $(CFLAGS) -o $@ $^
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
