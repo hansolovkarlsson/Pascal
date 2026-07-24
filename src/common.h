@@ -18,6 +18,7 @@ typedef struct {
     TokenType type;
     char text[MAX_NAME];
     int value;
+    int line; // Track source line number
 } Token;
 
 typedef enum { OP_PUSH, OP_ADD, OP_SUB, OP_MUL, OP_DIV, OP_LOAD, OP_STORE, OP_HALT } OpCode;
@@ -51,7 +52,8 @@ typedef enum {
 
 typedef struct ASTNode {
     NodeType type;
-    DataType expression_type; // Tracks evaluated data type of this node/sub-tree
+    DataType expression_type; // Evaluated data type
+    int line;                 // Source line associated with this node
     union {
         int num_value;        // NODE_NUMBER / NODE_BOOLEAN (0 or 1)
         int var_idx;          // NODE_VARIABLE / NODE_ASSIGN

@@ -1,0 +1,12 @@
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+Type Error: Binary operations require numeric components. Math expressions reject Boolean arguments.
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+Type Error: Variable 'count' requires type matching, cannot assign mismatched structural payload.
+--- Phase 1: Parsing AST ---
+
+--- Phase 2: Type Validation Checking ---
+Type Error: Variable 'count' requires type matching, cannot assign mismatched structural payload.

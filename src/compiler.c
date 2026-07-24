@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include "compiler.h"
 #include "lexer.h"
@@ -10,11 +11,28 @@ int code_idx = 0;
 Symbol sym_table[MAX_SYMBOLS];
 int sym_count = 0;
 
+static const char *current_filename = "<source>";
+
+// Centralized error diagnostic formatting
+static void compile_error(int line, const char *fmt, ...) {
+    fprintf(stderr, "%s:%d: Compile Error: ", current_filename, line);
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
+    va_end(args);
+    fprintf(stderr, "\n");
+    exit(1);
+}
+
 static ASTNode *create_node(NodeType type) {
     ASTNode *node = calloc(1, sizeof(ASTNode));
-    if (!node) { printf("Memory failure\n"); exit(1); }
+    if (!node) { 
+        fprintf(stderr, "Memory failure\n"); 
+        exit(1); 
+    }
     node->type = type;
     node->expression_type = TYPE_UNKNOWN;
+    node->line = token.line; // Record exact line where this node was parsed
     return node;
 }
 
@@ -22,15 +40,14 @@ static int find_var(const char *name) {
     for (int i = 0; i < sym_count; i++) {
         if (strcmp(sym_table[i].name, name) == 0) return i;
     }
-    printf("Compile Error: Unknown variable '%s'\n", name);
-    exit(1);
+    compile_error(token.line, "Unknown variable '%s'", name);
+    return -1;
 }
 
 static void add_var(const char *name, DataType type) {
     for (int i = 0; i < sym_count; i++) {
         if (strcmp(sym_table[i].name, name) == 0) {
-            printf("Compile Error: Duplicate variable declaration '%s'\n", name);
-            exit(1);
+            compile_error(token.line, "Duplicate variable declaration '%s'", name);
         }
     }
     strcpy(sym_table[sym_count].name, name);
@@ -39,8 +56,11 @@ static void add_var(const char *name, DataType type) {
 }
 
 static void match(TokenType type) {
-    if (token.type == type) next_token();
-    else { printf("Compile Error: Token mismatch syntax error\n"); exit(1); }
+    if (token.type == type) {
+        next_token();
+    } else {
+        compile_error(token.line, "Unexpected token '%s'", token.text[0] ? token.text : "EOF");
+    }
 }
 
 static ASTNode *expression(void);
@@ -96,8 +116,11 @@ static ASTNode *expression(void) {
     return node;
 }
 
-ASTNode *parse_ast(const char *source) {
+// Update AST Parser entry point to store filename context:
+ASTNode *parse_ast(const char *source, const char *filename) {
+    current_filename = filename ? filename : "<source>";
     init_lexer(source);
+
     match(TOKEN_PROGRAM);
     match(TOKEN_IDENTIFIER);
     match(TOKEN_SEMI);
@@ -152,12 +175,13 @@ ASTNode *parse_ast(const char *source) {
 }
 
 // --- GLOBAL TYPE CHECK VALIDATION PASS ---
-void type_check(ASTNode *node) {
-    if (!node) return;
 
-    // Post-order traversal: check leaf child nodes first
-    type_check(node->left);
-    type_check(node->right);
+void type_check(ASTNode *node, const char *filename) {
+    if (!node) return;
+    if (filename) current_filename = filename;
+
+    type_check(node->left, filename);
+    type_check(node->right, filename);
 
     switch (node->type) {
         case NODE_COMPOUND:
@@ -168,20 +192,18 @@ void type_check(ASTNode *node) {
             DataType var_type = sym_table[node->data.var_idx].type;
             DataType val_type = node->left->expression_type;
             if (var_type != val_type) {
-                printf("Type Error: Variable '%s' requires type matching, cannot assign mismatched structural payload.\n", 
+                compile_error(node->line, 
+                              "Type mismatch: cannot assign value to variable '%s'", 
                        sym_table[node->data.var_idx].name);
-                exit(1);
             }
             node->expression_type = var_type;
-            type_check(node->next); // Move down assignment chain sequence
+            type_check(node->next, filename);
             break;
         }
 
         case NODE_BINARY_OP: {
-            // Arithmetic operators (+, -, *, /) are only valid for integers
             if (node->left->expression_type != TYPE_INTEGER || node->right->expression_type != TYPE_INTEGER) {
-                printf("Type Error: Binary operations require numeric components. Math expressions reject Boolean arguments.\n");
-                exit(1);
+                compile_error(node->line, "Type mismatch: binary operations require integer operands");
             }
             node->expression_type = TYPE_INTEGER;
             break;

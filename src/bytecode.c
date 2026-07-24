@@ -19,8 +19,8 @@ int save_bytecode(const char *filename) {
     // Write metadata tracking information
     fwrite(&header, sizeof(BytecodeHeader), 1, file);
 
-    // Write symbol names to allow variable reporting on output dumps
-    fwrite(sym_table, sizeof(char) * MAX_NAME, sym_count, file);
+    // Write complete Symbol structs (name + type)
+    fwrite(sym_table, sizeof(Symbol), sym_count, file);
 
     // Write instruction code block chunks directly
     fwrite(code, sizeof(Instruction), code_idx, file);
@@ -54,7 +54,8 @@ int load_bytecode(const char *filename) {
     sym_count = header.sym_count;
     code_idx = header.code_idx;
 
-    fread(sym_table, sizeof(char) * MAX_NAME, sym_count, file);
+    // Read complete Symbol structs back into memory
+    fread(sym_table, sizeof(Symbol), sym_count, file);
     fread(code, sizeof(Instruction), code_idx, file);
 
     fclose(file);

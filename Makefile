@@ -19,7 +19,7 @@ SOURCES := $(wildcard $(SRC_DIR)/*.c)
 OBJECTS := $(SOURCES:.c=.o)
 TARGET  := $(BIN_DIR)/pascal
 
-TEST_DIR := tests
+TEST_DIR := test
 TEST_SRC := $(wildcard $(TEST_DIR)/*.pas)
 TEST_BIN := $(TEST_SRC:.pas=.bin)
 
@@ -36,15 +36,16 @@ $(TARGET): $(OBJECTS)
 
 # Cleanup
 clean:
-	rm -f $(TARGET) $(SRC_DIR)/*.o
-	rm tests/*.bin
+	-rm -f $(TARGET) $(OBJECTS) $(TEST_BIN)
 
 # Tests
-tests: $(TEST_BIN)
+test: $(TEST_BIN)
 
 $(TEST_BIN): $(TEST_SRC)
 
 %.bin: %.pas
-	$(TARGET) -c $< $@
+	@echo "Compiling $< into $@"
+	@-$(TARGET) -c $< $@ >> out.log 2>> err.log
+
 
 

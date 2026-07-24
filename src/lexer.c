@@ -4,22 +4,31 @@
 
 static const char *src;
 Token token;
+int current_line = 1;
 
 void init_lexer(const char *source) {
     src = source;
+    current_line = 1;
     next_token();
 }
 
 void next_token(void) {
-
     while (1) {
-        // 1. Skip standard whitespace
-        while (*src && isspace(*src)) src++;
+        // 1. Skip standard whitespace and increment line numbers
+        while (*src && isspace(*src)) {
+            if (*src == '\n') {
+                current_line++;
+            }
+            src++;
+        }
 
         // 2. Skip Pascal standard bracket comments { ... }
         if (*src == '{') {
             src++; // Skip the opening '{'
             while (*src && *src != '}') {
+                if (*src == '\n') {
+                    current_line++;
+                }
                 src++; // Consume all comment content characters
             }
             if (*src == '}') {
@@ -27,11 +36,12 @@ void next_token(void) {
                 continue; // Loop back up to catch any whitespace or sequential comments
             }
         } else {
-            // No more comments or whitespaces found to skip; break out and lex tokens
             break;
         }
     }
 
+    // Attach current line metadata to every generated token
+    token.line = current_line;
 
     if (!*src) { token.type = TOKEN_EOF; return; }
 
@@ -73,3 +83,4 @@ void next_token(void) {
     token.type = TOKEN_UNKNOWN;
     src++;
 }
+

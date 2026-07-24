@@ -36,14 +36,17 @@ int main(int argc, char *argv[]) {
     }
 
     if (strcmp(argv[1], "-c") == 0 && argc == 4) {
-        char *pascal_program = read_file(argv[2]);
+        // In main.c (-c branch):
+        char *src_filename = argv[2];
+        char *pascal_program = read_file(src_filename);
         if (!pascal_program) return 1;
 
         printf("--- Phase 1: Parsing AST ---\n");
-        ASTNode *ast = parse_ast(pascal_program);
+        ASTNode *ast = parse_ast(pascal_program, src_filename);
 
         printf("\n--- Phase 2: Type Validation Checking ---\n");
-        type_check(ast);
+        type_check(ast, src_filename);
+
 
         printf("\n--- Phase 3: Optimizing AST Tree ---\n");
         ast = optimize_ast(ast);            // Run constant folding first
