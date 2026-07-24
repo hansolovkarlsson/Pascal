@@ -339,3 +339,71 @@ void print_ast(ASTNode *node, int indent) {
             break;
     }
 }
+
+// Track whether a variable index is ever read/used across expressions
+static int var_used_tracker[MAX_SYMBOLS];
+
+// Pass 1: Recursively look for read occurrences (NODE_VARIABLE) 
+static void mark_used_variables(ASTNode *node) {
+    if (!node) return;
+
+    if (node->type == NODE_VARIABLE) {
+        var_used_tracker[node->data.var_idx] = 1;
+    }
+
+    mark_used_variables(node->left);
+    mark_used_variables(node->right);
+    mark_used_variables(node->next);
+}
+
+// Pass 2: Sweep and remove assignments to variables that were never marked as used
+static ASTNode *sweep_dead_assignments(ASTNode *node) {
+    if (!node) return NULL;
+
+    if (node->type == NODE_COMPOUND) {
+        node->left = sweep_dead_assignments(node->left);
+        return node;
+    }
+
+    if (node->type == NODE_ASSIGN) {
+        int var_idx = node->data.var_idx;
+        
+        // Process downstream sequential assignments first
+        node->next = sweep_dead_assignments(node->next);
+
+        // If the variable being assigned to is never read anywhere, drop this assignment
+        if (!var_used_tracker[var_idx]) {
+            printf("[DCE Optimization] Removing dead assignment to unreferenced variable: %s\n", 
+                   sym_table[var_idx].name);
+            
+            ASTNode *next_cached = node->next;
+            
+            // Isolate children so we don't accidentally free the rest of the program chain
+            node->left = optimize_ast(node->left); // clear underlying mathematical expressions safely
+            free_ast(node->left);
+            node->left = NULL;
+            node->next = NULL;
+            free(node);
+            
+            return next_cached; // Splice out of linked list
+        }
+        
+        node->left = sweep_dead_assignments(node->left);
+        return node;
+    }
+
+    node->left = sweep_dead_assignments(node->left);
+    node->right = sweep_dead_assignments(node->right);
+    return node;
+}
+
+ASTNode *eliminate_dead_code(ASTNode *node) {
+    // Clear out historical usage flags
+    memset(var_used_tracker, 0, sizeof(var_used_tracker));
+
+    // Step 1: Scan tree to discover which variables are genuinely read from
+    mark_used_variables(node);
+
+    // Step 2: Prune assignments writing into dead zones
+    return sweep_dead_assignments(node);
+}

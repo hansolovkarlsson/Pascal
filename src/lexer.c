@@ -11,7 +11,28 @@ void init_lexer(const char *source) {
 }
 
 void next_token(void) {
-    while (*src && isspace(*src)) src++;
+
+    while (1) {
+        // 1. Skip standard whitespace
+        while (*src && isspace(*src)) src++;
+
+        // 2. Skip Pascal standard bracket comments { ... }
+        if (*src == '{') {
+            src++; // Skip the opening '{'
+            while (*src && *src != '}') {
+                src++; // Consume all comment content characters
+            }
+            if (*src == '}') {
+                src++; // Skip the closing '}'
+                continue; // Loop back up to catch any whitespace or sequential comments
+            }
+        } else {
+            // No more comments or whitespaces found to skip; break out and lex tokens
+            break;
+        }
+    }
+
+
     if (!*src) { token.type = TOKEN_EOF; return; }
 
     if (isalpha(*src)) {

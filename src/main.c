@@ -39,21 +39,24 @@ int main(int argc, char *argv[]) {
         char *pascal_program = read_file(argv[2]);
         if (!pascal_program) return 1;
 
-        printf("--- Step 1: Parsing and Optimizing AST ---\n");
+        printf("--- Phase 1: Parsing AST ---\n");
         ASTNode *ast = parse_ast(pascal_program);
 
-printf("\n--- Phase 2: Type Validation Checking ---\n");
-type_check(ast);
-printf("Type verification successful! Zero semantic anomalies detected.\n");
+        printf("\n--- Phase 2: Type Validation Checking ---\n");
+        type_check(ast);
 
-printf("\n--- Phase 3: Optimizing AST Tree ---\n");
-        ast = optimize_ast(ast);
+        printf("\n--- Phase 3: Optimizing AST Tree ---\n");
+        ast = optimize_ast(ast);            // Run constant folding first
+        ast = eliminate_dead_code(ast);     // Run dead code elimination second
 
-        printf("\n--- Step 2: Generating Code ---\n");
+        printf("\n--- Visual AST Representation (Optimized) ---\n");
+        print_ast(ast, 0);
+
+        printf("\n--- Step 4: Generating Code ---\n");
         generate_code(ast);
         code[code_idx++] = (Instruction){OP_HALT, 0};
 
-        printf("\n--- Step 3: Archiving Bytecode Output ---\n");
+        printf("\n--- Step 5: Archiving Bytecode Output ---\n");
         save_bytecode(argv[3]);
 
         free_ast(ast);
